@@ -1,0 +1,33 @@
+<table >
+  <thead>
+    <tr>
+      <th>bucketlist Title</th>
+      <th>Bucketlist description</th>
+      <th>User Name</th>
+    </tr>
+  </thead>
+<tbody>
+  <tr ng-repeat="bucketlist in bucketlists">
+      <td ng-bind="bucketlist.title"></td>
+      <td ng-bind="bucketlist.description"></td>
+      <td ng-bind="bucketlist.description"></td>
+      <td ng-bind = "bucketlist._user"</td>
+    </tr>
+</tbody>
+</table>
+
+<p>Welcome                <a href="/">Logout</a></p>
+<form ng-submit="submit()">
+  Title:<input ng-model="newbucketlist.title" type="text" placeholder="title">
+  Description:<input ng-model="newbucketlist.description" type="text" placeholder="Description">
+  <select ng-model = "user.name">
+    <option ng-repeat="user in ">{{user.name}}</option>
+  </select>
+  <input type="submit" value="submit">
+
+
+
+  <p>List of other users(click to view profiles)</p>
+  <p><a href="/user/:id">KB</a></p>
+  <p><a href="/user/:id">Rozen</a></p>
+  <p><a href="/user/:id">Michael</a></p>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html ng-app='myApp'>
+<head>
+  <meta charset="utf-8">
+  <title>Bucketlist</title>
+  <script src="angular/angular.js" charset="utf-8"></script>
+  <script src="angular-route/angular-route.js" charset="utf-8"></script>
+  <script>
+  console.log(myApp)
+  var myApp = angular.module('myApp', ['ngRoute']);//must be defined only once for partials to show!
+  myApp.config(function ($routeProvider) {
+  // Routes to load your new and edit pages with new and edit controllers attached to them!
+  $routeProvider
+
+  .when('/user/:id',{
+    templateUrl:'partials/user.html',
+    controller:'userController',
+
+  })
+  .when('/',{
+    templateUrl:'partials/index.html',
+    controller:'indexController'
+
+  })
+  .when('/dashboard',{
+    templateUrl:'partials/dashboard.html',
+    controller:'dashboardController'
+
+  })
+
+
+  .otherwise('/')
+
+  });
+
+  myApp.factory('userFactory', function($http){
+    console.log('userFactory started')
+    var factory ={};
+
+
+    factory.index = function(callback){
+      $http.get('/dashboard').then(function(res){
+        console.log(res);
+        if (callback && typeof callback == "function"){
+          callback(res.data);
+        }
+      })
+    }
+
+
+    factory.create = function(newUser, callback){
+      $http.post('/',newUser).then(function(res){
+      console.log(newUser);
+      users.push(newUser);
+      if(callback && typeof callback == "function"){
+        callback(res.data);
+      }
+    })
+  }
+
+  //
+  factory.show = function(id, callback){
+    $http.get('/user/'+id).then(function(res){
+      if(callback && typeof callback == 'function'){
+        callback(res.data);
+      }
+    })
+  }
+
+    return factory;
+
+  })
+
+
+  myApp.factory('bucketlistFactory', function($http){
+    console.log('bucketlistFactory started')
+    var factory ={};
+    var bucketlist =[];
+
+    factory.index = function(callback){
+      $http.get('/bucketlist').then(function(res){
+        console.log(res);
+        if (callback && typeof callback == "function"){
+          callback(res.data);
+        }
+      })
+    }
+
+    factory.create = function(newbucketlist, callback){
+
+        $http.post('/bucketlist',newbucketlist).then(function(res){
+        console.log('T');
+        bucketlist.push(newbucketlist);
+        if(callback && typeof callback == "function"){
+          callback(res.data);
+        }
+      })
+    }
+    return factory
+  })
+
+
+  myApp.controller('indexController', ['$scope', 'bucketlistFactory', '$location',function($scope,bucketlistFactory,$location) {
+          console.log('indexController started')
+          bucketlistFactory.index(function(data){
+            $scope.bucketlist = data;
+          })
+          $scope.enter=function(){
+            console.log("click button")
+            $location.url('/dashboard');
+          }
+
+        }])
+
+  myApp.controller('dashboardController', ['$scope', 'bucketlistFactory', 'userFactory',function($scope,bucketlistFactory,userFactory) {
+                console.log('dashboardController started')
+                bucketlistFactory.index(function(data){
+                  $scope.bucketlist= data;
+                })
+
+                bucketlistFactory.create($scope.newbucketlist,function(data){
+                  console.log(data);
+                  bucketlistFactory.index(function(data){
+
+                  })
+                })
+
+                $scope.submit=function(){
+                  console.log("click button")
+
+                }
+
+
+              }])
+
+      myApp.controller('userController', ['$scope', 'bucketlistFactory', 'userFactory',function($scope,bucketlistFactory,userFactory) {
+                            console.log('dashboardController started')
+                            userFactory.index(function(data){
+                              $scope.user= data;
+                            })
+
+                            userFactory.create($scope.user,function(data){
+                              console.log(data);
+                              userFactory.index(function(data){
+
+                              })
+                            })
+
+                            userFactory.show($routeParams.id,function(data){
+                              console.log(data);
+                              $scope.user = data;
+                            })
+
+
+                          }])
+
+
+
+
+</script>
+</head>
+<body>
+  <div class="">
+
+  </div>
+  <div ng-view=""></div>
+</body>
+</html>
